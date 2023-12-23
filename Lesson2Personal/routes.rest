@@ -1,0 +1,10 @@
+//LOCALHOST
+GET http://localhost:8080/contacts
+###
+GET http://localhost:8080/contacts/blue
+###
+GET http://localhost:8080/contacts/green
+###
+GET http://localhost:8080/contacts/red
+
+// PRODUCTION Deploy
