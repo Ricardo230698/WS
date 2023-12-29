@@ -1,0 +1,23 @@
+[
+    {
+        "firstName": "Ricardo",
+        "lastName": "Bacilio",
+        "email": "ricardo@gmail.com",
+        "favoriteColor": "blue",
+        "birthday": "01 Jan 2000"
+    },
+    {
+        "firstName": "Melba",
+        "lastName": "Solorzano",
+        "email": "melba@gmail.com",
+        "favoriteColor": "green",
+        "birthday": "21 May 1999"
+    },
+    {
+        "firstName": "Sam",
+        "lastName": "Hernandez",
+        "email": "samh@gmail.com",
+        "favoriteColor": "red",
+        "birthday": "02 Feb 1978"
+    }
+]
