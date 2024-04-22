@@ -10,7 +10,7 @@
 // ... VEZ DEL CORTO (AUNQUE AÚN ASÍ NO ENTIENDO BIEN EL PROPÓSITO DE AQUELLO, PORQUE NO ACTUALIZA NADA, TALVEZ SOLO ...
 // ... ESTÁ BIEN PARA FINES DE EJEMPLO Y YA).
 
-// Actualización: PROBLEMA SOLUCIONADO TOTALMENTE. XD
+// Actualización: PROBLEMA SOLUCIONADO TOTALMENTE
 
 const express = require('express');
 const cors = require('cors');

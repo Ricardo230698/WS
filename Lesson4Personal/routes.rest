@@ -3,12 +3,12 @@ GET http://localhost:8080/contacts
 ###
 POST http://localhost:8080/contacts/
 {
-  "firstName": "Santiago", "lastName": "Ilustiza", "email": "oticse@gmail.com", "favoriteColor": "green always", "birthday": "12 Jan 2023"
+  "firstName": "Santiago", "lastName": "Ilustiza", "email": "oticse@gmail.com", "favoriteColor": "green", "birthday": "12 Jan 2023"
 }
 ###
 PUT http://localhost:8080/contacts/658642cf40ba96c108c200d9
 {
-  "firstName": "Rafael", "lastName": "Peña", "email": "rafa@gmail.com", "favoriteColor": "green always", "birthday": "123"
+  "firstName": "Rafael", "lastName": "Peña", "email": "rafa@gmail.com", "favoriteColor": "brown", "birthday": "123"
 }
 ###
 DELETE http://localhost:8080/contacts/658642cf40ba96c108c200d9
