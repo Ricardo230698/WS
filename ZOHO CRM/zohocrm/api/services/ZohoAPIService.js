@@ -38,6 +38,15 @@ module.exports = {
     } catch (error) {
       throw error.response.data;
     }
+  },
+
+  async getView(url, options) {
+    try {
+      const response = await axios.get(url, options);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 
 };
