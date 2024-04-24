@@ -8,35 +8,31 @@
 const ZohoAPIService = require("../services/ZohoAPIService");
 const axios = require('axios');
 
-
-
 module.exports = {
   async getCustomViewById(req, res) {
     // Get the needed parameters to construct the request URL
     const viewId = req.params.viewId;
     const moduleApiName = req.params.module;
     const authToken = req.headers.authorization;
-    const per_page = req.query.per_page;
-    let page_token;
+    const per_page = req.query.per_page; // This won't be much needed since we'll just get the default which is 200
+    let page_token; // Waiting to be assigned a value after the end of each loop
     let page;
 
     // Construct the request URL
-    // `https://www.zohoapis.com/crm/v6/${moduleApiName}?cvid=${viewId}&fields=Email`
     const baseURL = 'https://www.zohoapis.com/crm/v6';
-    let requestUrl = `${baseURL}/${moduleApiName}?cvid=${viewId}&fields=Email`;
-    // if (page) {
-    //   requestUrl += `&page=${page}`;
-    // }
-    // if (per_page) {
-    //   requestUrl += `&per_page=${per_page}`;
-    // }
-    // if (page_token) {
-    //   requestUrl += `&page_token=${page_token}`;
-    // }
+    let requestUrl;
 
-    for (let index = 0; index < 5; index++) {      
-      // Execute the function to get the records from the custom view
+    // Number of API calls per day
+    // We'll get 1000 records per day
+    const apiCalls = 5;
+
+    // Define the variable that will be used to store the IDs from the response later
+    let ids = [];
+
+    // This FOR loop will use the getView service (axios) based on the number of 'apiCalls'
+    for (let index = 0; index < apiCalls; index++) {      
       try {
+        // Prepare the URL
         requestUrl = `${baseURL}/${moduleApiName}?cvid=${viewId}&fields=Email`;
         if (page) {
           requestUrl += `&page=${page}`;
@@ -49,25 +45,32 @@ module.exports = {
         }
         console.log(viewId, moduleApiName, authToken);
         console.log(requestUrl);
+        // Execute the function to get the records from the custom view
         const view = await ZohoAPIService.getView(requestUrl, {
           headers: {
             'Authorization': `Zoho-oauthtoken ${authToken}`
           }
         });
     
+        console.log(view.status);
         console.log(view.data.data);
         console.log(view.data.info);
     
         // Save the records from the custom view to an array (but only their IDs)
-        let ids = [];
         view.data.data.forEach(contact => {
             ids.push(contact.id);
         });
-        console.log(ids);
 
+        // This is meant to happen at the end of each repetition
+        // We'll aggin to the variable 'page_token' the value that we get from the response (view)
         page = null;
         page_token = view.data.info.next_page_token;
         console.log(page_token)
+
+        // En la última repetición del FOR loop, se debe mandar el return en caso de éxito
+        if (index === 4 && view.status === 200) {
+          return res.ok({ message: 'Work done successfully' });
+        }
     
         // // Now, unblock emails for the retrieved IDs
         // try {
@@ -109,10 +112,10 @@ module.exports = {
         // console.error('Error fetching custom view by ID: ', error.response);
         console.error('Error fetching custom view by ID: ', error.response);
         return res.serverError({ error: 'An unexpected error occurred.' });
-      } 
+      }
     }
     // Aquí termina el ciclo FOR
-    
+    console.log(ids);
   }
 };
 
