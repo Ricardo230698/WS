@@ -69,6 +69,7 @@ module.exports = {
 
         // En la última repetición del FOR loop, se debe mandar el return en caso de éxito
         if (index === 4 && view.status === 200) {
+          console.log(ids);
           return res.ok({ message: 'Work done successfully' });
         }
     
@@ -115,9 +116,13 @@ module.exports = {
       }
     }
     // Aquí termina el ciclo FOR
-    console.log(ids);
   }
 };
+
+
+// Voy a crear una nueva funcion donde la primera cosa que haré será pasar la función getCustomViewById(req, res) ...
+// ... y guardar el resultado en una variable, esperando que aquella función getCustomById me devuelva la lista de IDs ...
+// ... y luego construir la logica para desbloquear aquellos emails
 
 
 // module.exports = {
