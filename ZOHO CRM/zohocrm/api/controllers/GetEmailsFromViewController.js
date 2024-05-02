@@ -54,7 +54,7 @@ module.exports = {
         });
     
         console.log(view.status);
-        console.log(view.data.data);
+        // console.log(view.data.data);
         console.log(view.data.info);
     
         // Save the records from the custom view to an array (but only their IDs)
@@ -113,6 +113,7 @@ module.exports = {
                 }
               }
           )
+          // console.log(zohoResponse.data);
         } catch (error) {
           // Handle unexpected errors
           sails.log.error('Error occurred:', error.response.data);     
@@ -134,6 +135,7 @@ module.exports = {
           )
           // Handle Zoho CRM API response
           if (zohoResponse.status === 200) {
+            // console.log(zohoResponse.data.data[0].details);
             return res.ok({ message: 'Emails unblocked successfully' });
           } else if (zohoResponse.status === 400) {
           // Handle specific error cases
@@ -152,7 +154,19 @@ module.exports = {
           }
         } catch (error) {
           // Handle unexpected errors
-          sails.log.error('Error occurred:', error.response.data);
+          // sails.log.error('Error occurred:', error.response.data.data);
+
+          error.response.data.data.forEach(element => {
+            // element.details
+            let numero = element.details.json_path.match(/\d+/);
+
+            // console.log
+            // sails.log.error('Error occurred:', parseInt(numero[0]));
+            sails.log.error(numero, ' - Error occurred:', secondHalf[parseInt(numero[0])], ' - Message: ', element.message);
+
+          });
+
+
           return res.serverError({ error: 'An unexpected error occurred.' });          
         }
       }
