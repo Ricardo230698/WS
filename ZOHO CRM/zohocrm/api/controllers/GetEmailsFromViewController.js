@@ -113,10 +113,27 @@ module.exports = {
                 }
               }
           )
-          // console.log(zohoResponse.data);
+          console.log(zohoResponse.data);
+
+
+
+          // ----------------------------------------
+          zohoResponse.data.data.forEach(element => {
+            // element.details
+            let numero = element.details.json_path.match(/\d+/);
+
+            // console.log
+            // sails.log.error('Error occurred:', parseInt(numero[0]));
+            sails.log.error(numero, ' - Error occurred:', firstHalf[parseInt(numero[0])], ' - Message: ', element.message);
+
+          });
+          // ----------------------------------------
+
+
+
         } catch (error) {
           // Handle unexpected errors
-          sails.log.error('Error occurred:', error.response.data);     
+          sails.log.error('Error occurred:', error);     
         }
       }
 
@@ -133,25 +150,25 @@ module.exports = {
                 }
               }
           )
-          // Handle Zoho CRM API response
-          if (zohoResponse.status === 200) {
-            // console.log(zohoResponse.data.data[0].details);
-            return res.ok({ message: 'Emails unblocked successfully' });
-          } else if (zohoResponse.status === 400) {
-          // Handle specific error cases
-          // You may need to parse Zoho's error response for detailed error messages
-          // For simplicity, I'm returning a generic error message
-            return res.badRequest({ error: 'Failed to unblock emails. Please check your request.' });
-          } else if (zohoResponse.status === 401) {
-              return res.unauthorized({ error: 'Unauthorized. Authentication failed.' });
-          } else if (zohoResponse.status === 404) {
-              return res.notFound({ error: 'Zoho API endpoint not found.' });
-          } else if (zohoResponse.status === 500) {
-              return res.serverError({ error: 'Internal Server Error. Please contact support.' });
-          } else {
-              console.log(zohoResponse.data.data);
-              return res.serverError({ error: 'Unexpected error occurred.' });
-          }
+          // // Handle Zoho CRM API response
+          // if (zohoResponse.status === 200) {
+          //   // console.log(zohoResponse.data.data[0].details);
+          //   return res.ok({ message: 'Emails unblocked successfully' });
+          // } else if (zohoResponse.status === 400) {
+          // // Handle specific error cases
+          // // You may need to parse Zoho's error response for detailed error messages
+          // // For simplicity, I'm returning a generic error message
+          //   return res.badRequest({ error: 'Failed to unblock emails. Please check your request.' });
+          // } else if (zohoResponse.status === 401) {
+          //     return res.unauthorized({ error: 'Unauthorized. Authentication failed.' });
+          // } else if (zohoResponse.status === 404) {
+          //     return res.notFound({ error: 'Zoho API endpoint not found.' });
+          // } else if (zohoResponse.status === 500) {
+          //     return res.serverError({ error: 'Internal Server Error. Please contact support.' });
+          // } else {
+          //     console.log(zohoResponse.data.data);
+          //     return res.serverError({ error: 'Unexpected error occurred.' });
+          // }
         } catch (error) {
           // Handle unexpected errors
           // sails.log.error('Error occurred:', error.response.data.data);
@@ -176,3 +193,11 @@ module.exports = {
   }
 
 };
+
+
+// Trabajé en lo del Clone Policy
+
+
+
+
+// Los cambios que se hagan en la etapa de desarrollo, que también se carguen en producción (Migraciones?)
