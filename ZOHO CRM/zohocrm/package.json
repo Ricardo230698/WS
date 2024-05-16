@@ -9,6 +9,7 @@
     "@sailshq/lodash": "^3.10.3",
     "@sailshq/socket.io-redis": "^6.1.2",
     "axios": "^1.6.8",
+    "csv-writer": "^1.6.0",
     "grunt": "1.0.4",
     "sails": "^1.5.9",
     "sails-hook-grunt": "^5.0.0",

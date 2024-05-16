@@ -86,6 +86,22 @@ module.exports = {
   async getEmailsAndUnblockThem(req, res) {
     let ids = await module.exports.getCustomViewById(req, res);
 
+    // Importa el módulo csv-writer (para guardar la info de los emails que no pudieron ser desbloqueados en un file)
+    const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+    
+    // Array para poner la info que irá en el file mentioned right above
+    let arrayForCSV = [];
+
+    // Define la configuración para el escritor CSV
+    const csvWriter = createCsvWriter({
+      path: 'output.csv', // Nombre del archivo CSV de salida
+      header: [
+        {id: 'id', title: 'ID'},
+        {id: 'reason', title: 'Reason'},
+        // Agrega aquí los encabezados para tus columnas de datos
+      ]
+    });
+
     // Divide the original array into two arrays of 500 items each
     const firstHalf = ids.slice(0, 8);
     const secondHalf = ids.slice(7);
@@ -129,6 +145,9 @@ module.exports = {
             if(element.details.json_path) {
               let numero = element.details.json_path.match(/\d+/);
               sails.log.error('ID could not be unblocked:', firstHalf[parseInt(numero[0])], '- Reason:', element.message);
+              // The following process is to save the info in the arrayForCSV array
+              let lineForArray = { id: firstHalf[parseInt(numero[0])], reason: element.message };
+              arrayForCSV.push(lineForArray);
             }
           });
         } catch (error) {
@@ -137,6 +156,9 @@ module.exports = {
             if(element.details.json_path) {
               let numero = element.details.json_path.match(/\d+/);
               sails.log.error('ID could not be unblocked:', firstHalf[parseInt(numero[0])], '- Reason:', element.message);
+              // The following process is to save the info in the arrayForCSV array
+              let lineForArray = { id: firstHalf[parseInt(numero[0])], reason: element.message };
+              arrayForCSV.push(lineForArray);
             }
           });
         }
@@ -171,9 +193,15 @@ module.exports = {
             if(element.details.json_path) {
               let numero = element.details.json_path.match(/\d+/);
               sails.log.error('ID could not be unblocked:', secondHalf[parseInt(numero[0])], '- Reason:', element.message);
+              // The following process is to save the info in the arrayForCSV array
+              let lineForArray = { id: secondHalf[parseInt(numero[0])], reason: element.message };
+              arrayForCSV.push(lineForArray);
             }
           });
           // Aquí sí tiene sentido usar el return ya que después no queremos ejecutar nada más
+          csvWriter
+            .writeRecords(arrayForCSV)
+            .then(() => console.log('CSV file written successfully'));
           return res.ok({ message: 'The work has finished.' });
         } catch (error) {
           // Hacemos lo de a continuación para que  se muestre solo el ID y el mensaje de aquellos emails que por alguna u otra razón no pudieron ser desbloqueados
@@ -182,8 +210,14 @@ module.exports = {
             if(element.details.json_path) {
               let numero = element.details.json_path.match(/\d+/);
               sails.log.error('ID could not be unblocked:', secondHalf[parseInt(numero[0])], '- Reason:', element.message);
+              // The following process is to save the info in the arrayForCSV array
+              let lineForArray = { id: secondHalf[parseInt(numero[0])], reason: element.message };
+              arrayForCSV.push(lineForArray);
             }
           });
+          csvWriter
+            .writeRecords(arrayForCSV)
+            .then(() => console.log('CSV file written successfully'));
           // Aquí sí tiene sentido usar el return ya que después no queremos ejecutar nada más
           return res.serverError({ error: 'An unexpected error occurred.' });          
         }
