@@ -100,7 +100,11 @@ module.exports = {
       // I will use 2 IF statements, each one with its own API call.
       // I have to do it this way because I only want to 'return' something in the 2nd (last) API call. Otherwise, if I were to 'return' something in the 1st API call, then, the FOR loop will stop and finish its execution
 
+      // Para el primer bunch of emails:
       if (index == 0) {
+        // ¡IMPORTANTE! --> Es importante entender la lógica que tiene esta API de Zoho CRM, para así comprender mejor cuándo se entrará al catch o, caso contrario, cuándo se ejecutará todo lo del try:
+          // - Se ejecutará todo lo que se haya dentro del siguiente TRY cuando AL MENOS haya un email que se pueda desbloquear dentro del primer bunch que le pasamos. En ese caso, el CATCH se ignorará por completo
+          // - Se ejecutará todo lo que se haya dentro del CATCH cuando TODOS los emails que pasamos en el primer bunch NO se puedan desbloquear por alguna u otra razón.
         try {
           const zohoResponse = await axios.post("https://www.zohoapis.com/crm/v6/Contacts/actions/unblock_email", {
                 "unblock_fields": [
@@ -113,31 +117,36 @@ module.exports = {
                 }
               }
           )
+          // -------------------------------------
           console.log(zohoResponse.data);
-
-
-
-          // ----------------------------------------
           zohoResponse.data.data.forEach(element => {
-            // element.details
-            let numero = element.details.json_path.match(/\d+/);
-
-            // console.log
-            // sails.log.error('Error occurred:', parseInt(numero[0]));
-            sails.log.error(numero, ' - Error occurred:', firstHalf[parseInt(numero[0])], ' - Message: ', element.message);
-
+            console.log(element.details);
           });
-          // ----------------------------------------
-
-
-
+          // -------------------------------------
+          // Hacemos lo de a continuación para que  se muestre solo el ID y el mensaje de aquellos emails que por alguna u otra razón no pudieron ser desbloqueados
+          zohoResponse.data.data.forEach(element => {
+            // Es importante checar que 'json.path' existe dentro de 'element.details' ya que cuando un item (email) sí puede ser desbloqueado, tal no será el caso y tendremos un error.
+            if(element.details.json_path) {
+              let numero = element.details.json_path.match(/\d+/);
+              sails.log.error('ID could not be unblocked:', firstHalf[parseInt(numero[0])], '- Reason:', element.message);
+            }
+          });
         } catch (error) {
-          // Handle unexpected errors
-          sails.log.error('Error occurred:', error);     
+          error.response.data.data.forEach(element => {
+            // Es importante checar que 'json.path' existe dentro de 'element.details' ya que cuando un item (email) sí puede ser desbloqueado, tal no será el caso y tendremos un error.
+            if(element.details.json_path) {
+              let numero = element.details.json_path.match(/\d+/);
+              sails.log.error('ID could not be unblocked:', firstHalf[parseInt(numero[0])], '- Reason:', element.message);
+            }
+          });
         }
       }
 
+      // Para el segundo bunch of emails:
       if (index == 1) {
+        // ¡IMPORTANTE! --> Es importante entender la lógica que tiene esta API de Zoho CRM, para así comprender mejor cuándo se entrará al catch o, caso contrario, cuándo se ejecutará todo lo del try:
+          // - Se ejecutará todo lo que se haya dentro del siguiente TRY cuando AL MENOS haya un email que se pueda desbloquear dentro del segundo bunch que le pasamos. En ese caso, el CATCH se ignorará por completo
+          // - Se ejecutará todo lo que se haya dentro del CATCH cuando TODOS los emails que pasamos en el segundo bunch NO se puedan desbloquear por alguna u otra razón.
         try {
           const zohoResponse = await axios.post("https://www.zohoapis.com/crm/v6/Contacts/actions/unblock_email", {
                 "unblock_fields": [
@@ -150,54 +159,35 @@ module.exports = {
                 }
               }
           )
-          // // Handle Zoho CRM API response
-          // if (zohoResponse.status === 200) {
-          //   // console.log(zohoResponse.data.data[0].details);
-          //   return res.ok({ message: 'Emails unblocked successfully' });
-          // } else if (zohoResponse.status === 400) {
-          // // Handle specific error cases
-          // // You may need to parse Zoho's error response for detailed error messages
-          // // For simplicity, I'm returning a generic error message
-          //   return res.badRequest({ error: 'Failed to unblock emails. Please check your request.' });
-          // } else if (zohoResponse.status === 401) {
-          //     return res.unauthorized({ error: 'Unauthorized. Authentication failed.' });
-          // } else if (zohoResponse.status === 404) {
-          //     return res.notFound({ error: 'Zoho API endpoint not found.' });
-          // } else if (zohoResponse.status === 500) {
-          //     return res.serverError({ error: 'Internal Server Error. Please contact support.' });
-          // } else {
-          //     console.log(zohoResponse.data.data);
-          //     return res.serverError({ error: 'Unexpected error occurred.' });
-          // }
-        } catch (error) {
-          // Handle unexpected errors
-          // sails.log.error('Error occurred:', error.response.data.data);
-
-          error.response.data.data.forEach(element => {
-            // element.details
-            let numero = element.details.json_path.match(/\d+/);
-
-            // console.log
-            // sails.log.error('Error occurred:', parseInt(numero[0]));
-            sails.log.error(numero, ' - Error occurred:', secondHalf[parseInt(numero[0])], ' - Message: ', element.message);
-
+          // -------------------------------------
+          console.log(zohoResponse.data);
+          zohoResponse.data.data.forEach(element => {
+            console.log(element.details);
           });
-
-
+          // -------------------------------------
+          // Hacemos lo de a continuación para que  se muestre solo el ID y el mensaje de aquellos emails que por alguna u otra razón no pudieron ser desbloqueados
+          zohoResponse.data.data.forEach(element => {
+            // Es importante checar que 'json.path' existe dentro de 'element.details' ya que cuando un item (email) sí puede ser desbloqueado, tal no será el caso y tendremos un error.
+            if(element.details.json_path) {
+              let numero = element.details.json_path.match(/\d+/);
+              sails.log.error('ID could not be unblocked:', secondHalf[parseInt(numero[0])], '- Reason:', element.message);
+            }
+          });
+          // Aquí sí tiene sentido usar el return ya que después no queremos ejecutar nada más
+          return res.ok({ message: 'The work has finished.' });
+        } catch (error) {
+          // Hacemos lo de a continuación para que  se muestre solo el ID y el mensaje de aquellos emails que por alguna u otra razón no pudieron ser desbloqueados
+          error.response.data.data.forEach(element => {
+            // Es importante checar que 'json.path' existe dentro de 'element.details' ya que cuando un item (email) sí puede ser desbloqueado, tal no será el caso y tendremos un error.
+            if(element.details.json_path) {
+              let numero = element.details.json_path.match(/\d+/);
+              sails.log.error('ID could not be unblocked:', secondHalf[parseInt(numero[0])], '- Reason:', element.message);
+            }
+          });
+          // Aquí sí tiene sentido usar el return ya que después no queremos ejecutar nada más
           return res.serverError({ error: 'An unexpected error occurred.' });          
         }
       }
-
     }  
-
   }
-
 };
-
-
-// Trabajé en lo del Clone Policy
-
-
-
-
-// Los cambios que se hagan en la etapa de desarrollo, que también se carguen en producción (Migraciones?)
