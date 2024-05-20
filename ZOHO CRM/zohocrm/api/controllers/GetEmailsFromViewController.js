@@ -70,7 +70,7 @@ module.exports = {
 
         // En la última repetición del FOR loop, se debe mandar el return en caso de éxito
         if (index === 4 && view.status === 200) {
-          return ids;
+          return { ids, page_token };
           // return res.ok({ message: 'Work done successfully' });
         }
       } catch (error) {
@@ -94,7 +94,7 @@ module.exports = {
 
     // Define la configuración para el escritor CSV
     const csvWriter = createCsvWriter({
-      path: 'output.csv', // Nombre del archivo CSV de salida
+      path: 'output2.csv', // Nombre del archivo CSV de salida
       header: [
         {id: 'id', title: 'ID'},
         {id: 'reason', title: 'Reason'},
@@ -103,8 +103,8 @@ module.exports = {
     });
 
     // Divide the original array into two arrays of 500 items each
-    const firstHalf = ids.slice(0, 8);
-    const secondHalf = ids.slice(7);
+    const firstHalf = ids.ids.slice(0, 500);
+    const secondHalf = ids.ids.slice(500);
 
     console.log(firstHalf);
     console.log(secondHalf);
@@ -202,6 +202,7 @@ module.exports = {
           csvWriter
             .writeRecords(arrayForCSV)
             .then(() => console.log('CSV file written successfully'));
+          console.log(ids.page_token);
           return res.ok({ message: 'The work has finished.' });
         } catch (error) {
           // Hacemos lo de a continuación para que  se muestre solo el ID y el mensaje de aquellos emails que por alguna u otra razón no pudieron ser desbloqueados
@@ -218,6 +219,7 @@ module.exports = {
           csvWriter
             .writeRecords(arrayForCSV)
             .then(() => console.log('CSV file written successfully'));
+          console.log(ids.page_token);
           // Aquí sí tiene sentido usar el return ya que después no queremos ejecutar nada más
           return res.serverError({ error: 'An unexpected error occurred.' });          
         }
